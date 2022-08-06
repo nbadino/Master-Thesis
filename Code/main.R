@@ -1,3 +1,4 @@
+#### serie di script disordinati solo per backup
 library(sf)
 library(raster)
 library(exactextractr)
@@ -92,7 +93,7 @@ popRaster
 plot(popRaster, col=myColorRamp(2))
 
 
-#funzione rimozione outliers. Forse non funziona perchè taglia valori bassi.
+#funzione rimozione outliers. Forse non funziona perchè taglia anche valori bassi.
 f <- function(x) {
   q <- quantile(x, .9999, na.rm=TRUE)
   x[x>q] <- NA
