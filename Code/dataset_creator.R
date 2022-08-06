@@ -57,7 +57,3 @@ panel$gdppcp <- panel$gdp/panel$population
 #source https://blogs.worldbank.org/opendata/new-world-bank-country-classifications-income-level-2021-2022
 
 panel$econ_groupings <- ifelse(panel$gdppcp>=12000, "HI", ifelse(panel$gdppcp>=4000, "UMI", "LI"))
-
-model <- lm(log(sum+1)~log(gdp+1)+abs(center_lat),data=panel)
-summary(model)
-scatterplot3d(log(panel$gdp+1), log(panel$sum+1), log(panel$population+1))
