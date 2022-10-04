@@ -1,0 +1,154 @@
+library(readr)
+library(plm)
+library(fixest)
+library(kableExtra)
+library(countrycode)
+library(texreg)
+library(xtable)
+library(tidyverse)
+
+#Data import and soft data cleaning
+dataset <- read_csv("F:/tmp/dataset_fin.csv")
+dataset$...1 <- NULL
+dataset[dataset$year==2017,]$sum.x <- dataset[dataset$year==2017,]$sum.x+
+#dataset$sum_log_sq <- dataset$sum_log^2
+#select the rows that do not contain na values
+#ppp <- dataset[which(!is.na(dataset$gdp_log)),][which(!is.na(dataset$sum_log)),]
+#creation of data panel dataset with country and year as indices
+
+pdata <- pdata.frame(dataset, index=c("country","year"), drop.index=FALSE, row.names=TRUE)
+
+pdata$sum_growthsq <- pdata$sum_growth^2
+
+mod_current <- feols(gdp_cp_growth~sum_growth+factor(year) | country, data=pdata, cluster="country")
+mod_luc_constant <- feols(gdp_lcu_constant_growth~sum_growth+factor(year) | country, data=pdata, cluster="country")
+mod_luc_current <- feols(gdp_lcu_current_growth~sum_growth+sum_growthsq+factor(year) | country, data=pdata, cluster="country")
+mod_ppp <- feols(gdp_ppp_growth~sum_growth+factor(year) | country, data=pdata, cluster="country")
+summary(mod_current)
+
+#generation of tables
+texreg(list(mod_current,
+            mod_luc_constant,
+            mod_luc_current,
+            mod_ppp))
+
+gdp <- "dataset$gdp_ppp_growth"
+#calculation of parameters for different country groups:
+
+#var_na_gdp="variance of national account gdp growth rates"
+#var_ntl="variance of night time ligths growth rates"
+#cov_gdpna_ntl="covariance between national accounts' GDP and night-time lights"
+var_na_gdp <- c()
+var_ntl <- c()
+cov_gdpna__ntl <- c()
+
+
+for(i in c("A","B","C","D")){
+  var_na_gdp <- c(var_na_gdp,var((dataset[dataset$grading_index_lett==i,]$gdp_ppp_growth),use="complete"))
+  var_ntl <- var(na.omit((dataset[dataset$grading_index_lett==i,]$sum_growth), use="complete"))
+  cov_gdpna__ntl <- cov(dataset$gdp_ppp_growth,dataset$gdp_ppp_growth, use="complete")
+}
+#Assignment of values of phi for good data countries. These values are assumed
+signal_A <- c("1","0.9","0.8","0.7","0.6")
+#calculation of true gdp variance given the previous assumption
+vary <- c()
+for(j in signal_A){
+  vary <- c(vary,as.double(j)*var_na_gdp[1])
+}
+#when the variance is obtained the signals for the other countries are easily computed
+signal_B <- vary/var_na_gdp[2]
+signal_C <- vary/var_na_gdp[3]
+signal_D <- vary/var_na_gdp[4]
+#also for the structural beta --> that is the parameter between night time lights and true gdp
+beta <- cov_gdpna__ntl/vary
+#calculating the variance of some errors terms trough moments
+varex <- var_ntl-cov_gdpna__ntl
+varez_A <- var_na_gdp[1]-vary
+varez_B <- var_na_gdp[2]-vary
+varez_C <- var_na_gdp[3]-vary
+varez_D <- var_na_gdp[4]-vary
+#calculating the optimal lambdas for different coutry groups and different initial assumptions
+lambda_A <- varex*vary/(varex*vary+varez_A*(beta*beta*vary+varex))
+lambda_B <- varex*vary/(varex*vary+varez_B*(beta*beta*vary+varex))
+lambda_C <- varex*vary/(varex*vary+varez_C*(beta*beta*vary+varex))
+lambda_D <- varex*vary/(varex*vary+varez_D*(beta*beta*vary+varex))
+
+
+#reconstructing true GDP
+
+#here I chose which lambda to be taken --> att.bias=1 is too strong assumption so I choose 0.9
+lamA <- lambda_A[2]
+lamB <- lambda_B[2]
+lamC <- lambda_C[2]
+lamD <- lambda_D[2]
+
+#now I estimate GDP just with NTL from panel data results
+
+estimated <- data.frame(dataset$year, dataset$country, dataset$grading_index_lett, dataset$sum_growth,dataset$gdp_ppp_growth)
+names(estimated) <- c("year", "country","grading_index_lett", "sum_growth", "gdp_ppp_growth")
+estimated$"2012" <- ifelse(estimated$year==2012,1,0)
+estimated$"2013" <- ifelse(estimated$year==2013,1,0)
+estimated$"2014" <- ifelse(estimated$year==2014,1,0)
+estimated$"2015" <- ifelse(estimated$year==2015,1,0)
+estimated$"2016" <- ifelse(estimated$year==2016,1,0)
+estimated$"2017" <- ifelse(estimated$year==2017,1,0)
+estimated$"2018" <- ifelse(estimated$year==2018,1,0)
+estimated$"2019" <- ifelse(estimated$year==2019,1,0)
+estimated$"2020" <- ifelse(estimated$year==2020,1,0)
+estimated$"2021" <- ifelse(estimated$year==2021,1,0)
+estimated$predicted2 <- estimated$sum_growth+(estimated$`2013`*coefficients(mod_ppp)[2])+
+  (estimated$`2014`*coefficients(mod_ppp)[3])+
+  (estimated$`2015`*coefficients(mod_ppp)[4])+
+  (estimated$`2016`*coefficients(mod_ppp)[5])+
+  (estimated$`2017`*coefficients(mod_ppp)[6])+
+  (estimated$`2018`*coefficients(mod_ppp)[7])+
+  (estimated$`2019`*coefficients(mod_ppp)[8])+
+  (estimated$`2020`*coefficients(mod_ppp)[9])
+coefficients(mod_ppp)[2]
+#I compute the improved GDP
+estimated$gdptrue <- ifelse(estimated$grading_index_lett=="A", estimated$gdp_ppp_growth * lamA + estimated$predicted2 * (1-lamA),
+                            ifelse(estimated$grading_index_lett=="B", estimated$gdp_ppp_growth * lamB + estimated$predicted2 * (1-lamB),
+                                   (ifelse(estimated$grading_index_lett=="C", estimated$gdp_ppp_growth * lamC + estimated$predicted2 * (1-lamC),
+                                           estimated$gdp_ppp_growth * lamD + estimated$predicted2 * (1-lamD)))))
+
+#plots
+
+count <- "ITA"
+plot(estimated[estimated$country==count,]$year,                              # Draw first time series
+     estimated[estimated$country==count,]$gdptrue,
+     type = "l",
+     col = 2,
+     xlab = "Year",
+     ylab = "Values")
+lines(estimated[estimated$country==count,]$year,                              # Draw first time series
+     estimated[estimated$country==count,]$gdp_ppp_growth,
+     type = "l",
+     col = 1,
+     xlab = "Year",
+     ylab = "Values")
+
+
+#Creation of some tables
+df <- data.frame("$\\phi_{A}$"=signal_A, "phiB"=signal_B, "phiC"=signal_C, "phiD"=signal_D, "beta"=beta, "lambdaA"=lambda_A, "lambdaB"=lambda_B, "lambdaC"=lambda_C, "lambdaD"=lambda_D)
+print.xtable(xtable(head(df)))
+
+
+# Creating table of groups countries
+A_countries <- dataset$country[na.omit(dataset$grading_index_lett=="A")]
+length(A_countries)
+B_countries <- dataset$country[na.omit(dataset$grading_index_lett=="B")]
+length(B_countries)
+C_countries <- dataset$country[na.omit(dataset$grading_index_lett=="C")]
+length(C_countries)
+D_countries <- dataset$country[dataset$grading_index_lett=="D"]
+A_countries <- A_countries[!duplicated(A_countries)]
+B_countries <- B_countries[!duplicated(B_countries)]
+C_countries <- C_countries[!duplicated(C_countries)]
+D_countries <- D_countries[!duplicated(D_countries)]
+
+A <- toString(countrycode(A_countries, origin="iso3c",destination="country.name.en"))
+B <- toString(countrycode(B_countries, origin="iso3c",destination="country.name.en"))
+C <- toString(countrycode(C_countries, origin="iso3c",destination="country.name.en"))
+D <- toString(countrycode(D_countries, origin="iso3c",destination="country.name.en"))
+
+
