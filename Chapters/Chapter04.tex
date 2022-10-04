@@ -1,0 +1,313 @@
+\chapter{The model}\label{ch:model}
+
+Economists, since the seminal work of \cite{chen2011using}, the successive work of \cite{henderson2012measuring} and the more recent paper of \cite{hu2022illuminating} dealt with night-time lights using latent variable models with measurement error. I decided to base the work of this thesis on the framework built from the papers just mentioned.
+
+Official GDP estimates are plagued by a non-negligible statistical error due to the difficulty of estimation and the limited statistical capacity of many countries. Let $y$ be the "true" real GDP, $y^{NA}$ the real GDP as measured in the national accounts, and $NTL$ the sum of night-time lights measured from outer space. For a generic country we can assume that the GDP measured by the national accounts is equal to the true GDP value plus an error component:
+\begin{equation}
+    y^{NA}=y+\varepsilon^{NA}.
+    \label{eq:nataccgdp}
+\end{equation}
+Moreover, assume that night-time lights are produced by "true" GDP as in the following relation:
+\begin{equation}
+    NTL=\beta y+\varepsilon^{NTL}.
+    \label{eq:NTL}
+\end{equation}
+
+This thesis aims to construct a better estimate of GDP through the additional information from night-time lights.
+
+It should be noted that the error terms of equation \ref{eq:nataccgdp} and \ref{eq:NTL}, $\varepsilon^{NA}$ and $\varepsilon^{NTL}$, have a peculiar relation.
+They are, respectively, the error terms of national accounts GDP estimate and of night-time lights measurement. That is, for the component concerning official estimates, the errors of national statistical systems in estimating all production components of complex national economic systems and, for night-time lights, the difference between the light actually emitted by human activities and the light captured by the sensor. An interesting property of using information from outer space is that the measurement errors of GDP and of night-time lights do not depend on each other. The underlying idea is that the error from official GDP estimation, which is mainly due to economic reasons, is uncorrelated with the error of measurement of night-time lights from outer space, which is due to optical or physical reasons.
+So:
+\begin{equation}
+    \label{eq:assumption}
+    cov(\varepsilon^{NA}, \varepsilon^{NTL})=0.
+\end{equation}
+
+It should be noted that equation \ref{eq:NTL} represents a production relationship between the true GDP and night-time lights. As previously shown, the lights produced overnight in a country are strictly connected to GDP. However, the purpose of this thesis is to construct an improved estimate of GDP through night-time lights' additional information. Thus, the first step of this model is estimating national accounts GDP through night-time lights.
+The simplest predictive relation can be written as:
+\begin{equation}
+    \label{eq:proxy}
+    y^{NA}=\gamma NTL+\varepsilon.
+\end{equation}
+Note that $\gamma$ from equation \ref{eq:NTL} is $\frac{cov(y^{NA}, NTL)}{var(NTL)}$.
+Using equations \ref{eq:momenttwo} and \ref{eq:betamoments}, the relation between $\gamma$ and $\beta$ is:
+\begin{equation}
+\label{eq:plim}
+    plim\left(\hat{\gamma}\right)=\frac{1}{\beta}\left(\frac{\beta^2\sigma_y^2}{\beta^2\sigma^2_y+\sigma_{NTL}^2}\right).
+\end{equation}
+The true GDP cannot be observed so the $\beta$ parameter cannot be calculated unless, as I am going to show, some assumptions are taken.
+%The estimation of equation \ref{eq:proxy}
+%However, as in past literature, better cannot be done, and thus, this can be regarded as the best fit relationship to be used in producing proxies for national income estimation.% 
+%As shown by past literature \citep{henderson2012measuring} estimating $\gamma$ with bad data countries' income shouldn't give concern. Under the assumption that $cov(\varepsilon^{NA}, \varepsilon^{NTL})=0$ the degree of measurement error in GDP has no effect on the estimated value of the parameter.
+
+It is possible to construct an improved measure of GDP through the linear combination (as shown in equation \ref{eq:lincomb}) of the GDP predicted with night-time lights and the official GDP such that the resulting optimal composite estimate will have a lower error than either separately.
+\begin{equation}
+\hat{y}=\lambda\cdot y^{NA}+(1-\lambda)\cdot \hat{y}^{NA}.
+\label{eq:lincomb}
+\end{equation}
+The weight $\lambda$ minimizes the variance of the measurement error in the estimate relative to the true value of GDP growth. As long as the weight of $\hat{y}^{NA}$, that is $(1-\lambda)$, is greater than zero, the use of night-time lights improves our ability to measure true GDP. Optimal $\lambda$ is obtained by:
+\begin{equation}
+    \lambda^\star=argmin\left(var(\hat{y}-y)\right).
+\end{equation}
+
+Now, note that, thanks to the assumption taken in equation \ref{eq:assumption}, the variance term can be decomposed as follows:
+\begin{equation}
+    \begin{split}
+        \MoveEqLeft
+        var(\hat{y}-y)=\\
+        &= var(\lambda(y^{NA}-y)+(1-\lambda)(\hat{y}^{NA}-y))\\
+        &= \lambda^2 \sigma^2_{NA}+(1-\lambda)^2 var(\hat{y}^{NA}-y).
+    \end{split}
+\end{equation}
+Past literature, using \ref{eq:proxy} and \ref{eq:NTL} rewrite $var(\hat{y}^{NA}-y)$ as follows:
+\begin{equation}
+    \begin{split}
+        \MoveEqLeft
+        var(\hat{y}^{NA}-y)=\\
+        &= var(\hat{\gamma}NTL-y)=var(\hat{\gamma} \beta y+
+        \hat{\gamma}\varepsilon^{NTL}-y)\\
+        &=(\hat{\gamma}\beta -1)^2\sigma^2_y+\hat{\gamma}^2\sigma^2_{NTL}.
+        \end{split}
+\end{equation}
+However, this procedure seems to be suspicious because $\hat{\gamma}$, which is a random variable, is taken out of the variance operator as if it were a constant. Future work will have to go deeper into these passages.
+
+Using equation \ref{eq:plim} we obtain:
+\begin{equation}
+    var(\hat{y}^{NA}-y)= \frac{\sigma_y^2\sigma_{NTL}^2}{\beta^2\sigma_y^2+\sigma_{NTL}^2}.
+\end{equation}
+Substituting this in the original equation we get:
+\begin{equation}
+    \begin{split}
+        \MoveEqLeft
+        var(\hat{y}-y)=\\
+        &= \lambda^2 \sigma^2_{NA}+(1-\lambda)^2 \frac{\sigma_y^2\sigma_{NTL}^2}{\beta^2\sigma_y^2+\sigma_{NTL}^2}.
+    \end{split}
+\end{equation}
+
+Finally, solving for the $\lambda$, which minimizes the variance, the following is obtained:
+\begin{equation}
+\label{eq:lambda}
+    \lambda^\star=\frac{\sigma^2_{NTL}\sigma^2_y}{\sigma^2_{NA}(\beta^2\sigma^2_y+\sigma_{NTL}^2)+\sigma^2_{NTL}\sigma^2_y}.
+\end{equation}
+
+Note that $\lambda^\star$ is a function of four unknown parameters, but the observed data provide only three sample moments:
+\begin{subequations}
+\label{eq:moments}
+\begin{align}
+\label{eq:varna}
+var(y^{NA}) & = \sigma^2_y + \sigma^2_{NA} \\
+\label{eq:momenttwo}
+var(NTL) &= \beta^2\sigma^2_y+\sigma^2_{NTL} \\
+\label{eq:betamoments}
+cov(NTL,y^{NA}) &= \beta \sigma^2_y
+\end{align}
+\end{subequations}
+ Substituting equation \ref{eq:moments} moments in the equation \ref{eq:lambda} and rearranging, we get:
+ \begin{equation}
+     \lambda^\star=\frac{\phi var(y^{NA})var(NTL)-cov(y^{NA},NTL)^2}{var(y^{NA})var(NTL)-cov(y^{NA},NTL)^2}.
+ \end{equation}
+ where:
+ \begin{equation}
+ \label{eq:phi}
+     \phi=\frac{\sigma^2_y}{\sigma^2_y+\sigma^2_{NA}}.
+ \end{equation}
+ Equation \ref{eq:phi} is the ratio of signal to total variance in measured GDP, or also known as attenuation bias.
+ \section{Solving the identification problem}
+ As just shown, $\lambda^{\star}$ is a function of four unknown parameters but observed data provide only three sample moments. In order to solve the identification problem, many strategies may be adopted. Past literature used information from IMF and World Bank on the quality of national statistical institutes. The idea is that countries with less developed statistical institutes produce GDP estimates with a bigger measurement error. 
+ Thus, the set of countries can be sorted by their statistical institutions quality and divided into $n$ groups, and the last term of equation \ref{eq:varna} can be let vary:
+ \begin{equation}
+ \label{eq:vargood}
+     var(y^{NA}_n)=\sigma^2_y+\sigma^2_{NA,n}.
+ \end{equation}
+ with $n=(1,...,N)$.
+ 
+ In a two groups case, in which countries are divided in good and bad data countries we get four equations with five unknowns ($\beta$, $\sigma^2_y$, $\sigma^2_{NTL}$, $\sigma^2_{NA,g}$, $\sigma^2_{NA,b}$).
+ Where $\sigma^2_{NA,g}$ and $\sigma^2_{NA,b}$ are, respectively, the variances of the measurement errors for good and bad data countries.
+  The fifth element required to identify the system is the $\phi_g$ for good data countries, which is obtained by  making an assumption on its value, as I will show in the next section.
+ This lets me to close the model and to estimate the true GDP variance along with the remaining unknowns.
+ \subsection{Data}
+ In order to estimate the parameters, a source of information on statistical institutes quality is needed. Past literature had some difficulties to reconstruct such information. This is because, at the time, a single index wasn't produced, and information had to be merged and harmonized from different sources (mainly from World Bank, IMF and Penn World Table). For example, the World Bank used to produce a statistical capacity index only for developing countries, thus requiring to obtain information from developed countries elsewhere. From 2021 the World Bank started to produce a statistical performance index for 174 countries \citep{dang2021measuring}.
+ The new index has worldwide coverage and is a much-improved version of the previous one. To my knowledge, such an index has never been used in the night-time lights GDP estimation literature.
+ The information obtained from the World Bank is a time series of 4 years, from 2016 to 2019. So in my model, unfortunately, I will not let the index of statistical performance to vary over time even though the model can be easily extended in this sense.
+I believe that for analyses of small periods, in my case 9 years, this assumption is not too strong. \citet{henderson2012measuring}, and \citet{chen2011using}, although they analyse much larger periods than in this thesis, also have the same problem and keep the parameters on statistical capacity fixed over time. 
+Hence, the index I will use in the model is calculated through an arithmetic average of the four available observations.
+ 
+ I proceed dividing countries into four groups (A, B, C, D) according to their statistical performance, and then I have all the elements to close the analysis. 
+ The first step is to estimate GDP through night-time light proxy. I use a fixed effect panel-data model with clustered standard errors with years dummy in order to control for year-specific measurement error of night-time lights, as suggested by past literature (\citet{henderson2012measuring}, \citet{beyer2022measuring}). 
+ As national account GDP growth rates, I use gross domestic product based on purchasing power parity published by the World Bank after testing other official measures like constant prices GDP growth rate, local currency unit at constant prices and at current prices.
+ Regressions results are summarised in the appendix.
+ 
+ 
+
+ After estimating the model, a GDP measure $\hat{y}^{NA}$ can be constructed using only night-time lights information.
+ Finally, I proceed with the estimation of the remaining parts of the model.
+ The model can be closed after making an assumption on the $\phi_A$, the attenuation bias for countries with high statistical capacity. Ideally, if we were perfectly capable of measuring the true GDP, the signal would equal one. So, it can be assumed that for countries with high-quality statistical institutions, $\phi_A$ has a value near one. On the other hand, it can be expected that in countries where the national statistical system is more lacking, $\sigma^2_{NA}$ is higher, and so the resulting $\phi$ is lower. 
+ 
+ With $\phi_A$ fixed by assumption, the variance of $y$ is obtained by combining equations \ref{eq:phi} with \ref{eq:vargood}:
+ \begin{equation}
+     var(y)=\frac{\phi_A}{var(y^{NA}_A)}.
+ \end{equation}
+ Once $var(y)$ is obtained, $\phi_B$, $\phi_C$ and $\phi_D$ can be calculated as follows:
+ 
+  \begin{equation}
+    \phi_n =\frac{var(y)}{var(y^{NA}_n)}.
+ \end{equation}
+with $n=(B,C,D)$.
+
+With $var(y)$ known, the $\beta$ parameter of equation \ref{eq:NTL} can be obtained after inverting \ref{eq:betamoments}:
+\begin{equation}
+    \beta  = \frac{cov(NTL,y^{NA})}{\sigma^2_y} .
+\end{equation}
+%We get all parameters after calculating $\sigma^2_{NA}$ and $\sigma^2_{NTL}$ from \ref{eq:momenttwo} and \ref{eq:varna}.
+Finally, $\lambda^{\star}$ for each country group can be calculated from \ref{eq:lambda}.
+
+It is important to notice that the estimation of all parameters relies on the initial assumption of $\phi_A$ parameter. Thus, in table \ref{table:numsim} I show how the model's parameters change with different assumed values of $\phi_A$.
+When $\phi_A$ is fixed to 1, $\lambda_A$ is 1, while it drops to 0.55 for the B group, to 0.44 to the third and to 0.16 to the fourth.
+The lambdas obtained are the optimal weights of equation \ref{eq:lambda} that minimize the variance of the measurement error in the estimate relative to the true value of income. 
+\begin{table}
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{>{\centering\hspace{0pt}}m{0.1\linewidth}>{\centering\hspace{0pt}}m{0.1\linewidth}>{\centering\hspace{0pt}}m{0.1\linewidth}>{\centering\hspace{0pt}}m{0.1\linewidth}>{\centering\hspace{0pt}}m{0.104\linewidth}>{\centering\hspace{0pt}}m{0.088\linewidth}>{\centering\hspace{0pt}}m{0.112\linewidth}>{\centering\hspace{0pt}}m{0.112\linewidth}>{\centering\arraybackslash\hspace{0pt}}m{0.112\linewidth}} 
+\hline
+\multicolumn{4}{>{\centering\hspace{0pt}}m{0.4\linewidth}}{Attenuation bias} &  & \multicolumn{4}{>{\centering\arraybackslash\hspace{0pt}}m{0.424\linewidth}}{Optimal weight} \\
+$\phi_A$ & $\phi_B$ & $\phi_C$ & $\phi_D$ & $\beta$ & $\lambda_A$ & $\lambda_B$ & $\lambda_C$ & $\lambda_D$ \\ 
+\hline
+\rowcolor[rgb]{0.902,0.902,0.902} 1 & 0.56 & 0.45 & 0.16 & 1.33 & 1.00 & 0.55 & 0.44 & 0.16 \\
+0.9 & 0.51 & 0.41 & 0.15 & 1.48 & 0.89 & 0.49 & 0.39 & 0.14 \\
+\rowcolor[rgb]{0.902,0.902,0.902} 0.8 & 0.45 & 0.36 & 0.13 & 1.66 & 0.79 & 0.43 & 0.34 & 0.12 \\
+0.7 & 0.39 & 0.32 & 0.12 & 1.9 & 0.68 & 0.37 & 0.30 & 0.11 \\
+\rowcolor[rgb]{0.902,0.902,0.902} 0.6 & 0.34 & 0.27 & 0.10 & 2.22 & 0.58 & 0.32 & 0.25 & 0.09 \\
+\hline
+\end{tabular}
+}
+\caption{Results for different values of fixed $\phi_A$.}
+\label{table:numsim}
+\end{table}
+
+For $\lambda=1$ equation \ref{eq:lambda} reduces to $\hat{y}=y^{NA}$, thus additional information from outer space is not needed to improve national accounts estimate of gross national product. This is the case of countries with perfect statistical institutions.
+
+For $\lambda=0$ equation \ref{eq:lambda} reduces to $\hat{y}=\hat{y}^{NA}$. This is the case of countries with nonexistent or very lacking statistical performances. Thus, GDP estimated from night-time light is the only source of information to estimate true GDP.
+$\phi_A=1$ is too strong an assumption, so I will opt for a less extreme value of 0.9 that is usually taken in the literature (\citet{henderson2012measuring}, \citet{chen2021chasing}).
+
+With $\phi_A=0.9$ the resulting lambdas are $\lambda_A=0.89$, $\lambda_B=0.49$, $\lambda_C=0.39$ and $\lambda_D=0.14$.
+The results obtained are quite extreme for country group D; national accounts GDP enters in equation \ref{eq:lambda} only with a weight of 0.14. This is due to the high variance of such group respect to the others.
+It is now possible to reconstruct true GDP as in equation \ref{eq:lambda}.
+
+\section{Descriptive analysis of the improved GDP}
+
+Previous night-time lights literature has given much attention to the misestimation of GDP. In particular, two very interesting topics are the informal economy estimation and the study of which countries are overstating their official GDP.
+Regarding the estimation of the informal economy, the paper by \citet{ghosh2009estimation} is a seminal paper on the subject. On the other hand, the papers by \citet{martinez2018much} and \citet{clark2017china} are two of the best-known papers on the study through night-time lights techniques of possible GDP overestimation.
+The approach used in this thesis is rough because it does not consider the different production functions between countries. In fact, it is conceivable that the elasticity between GDP and lights in a developed country differs from that in a developing country. 
+Let's assume that observable night-time lights consist of two components:
+\begin{equation}
+    NTL_{total}=NTL_{citizens-life}+NTL_{production}
+\end{equation}
+The last component of the RHS is peculiar to the specific production function of the country. It depends on different levels of development of the country or different sector shares. Even if higher lights still mean higher GDP, elasticities may significantly vary between countries.
+The first component of the RHS is relative to the quantities of night-time lights emitted by something it can be identified with the life of citizens. It means consumption relative to city life or installed capital that produces light, such as street lamps. 
+This component is strictly connected with country and citizens' well-being. Moreover, it actually depends on the last component of the RHS because with high production, countries can permit to use more light in the activities of the first term.
+I believe this is why night-time lights are still a precise tool to predict GDP even between countries with very different production systems.
+
+In figure \ref{fig:france} are plotted the growth rates of the improved estimate of GDP obtained through the model explained in chapter \ref{ch:model} and the official growth rates of GDP for France. 
+\begin{figure}[h!]
+    \centering
+    \hspace*{-0.5cm}
+    \subfloat{{\includesvg[width=13cm]{images/fra.svg} }}%
+    \caption{France.}%
+    \label{fig:france}
+\end{figure}
+As one could expect the differences are negligible. Moreover, the improved GDP sees the same effect of COVID-19 to the french economy as the national account estimates.
+
+%In figure \ref{fig:france} is shown the difference between the improved estimate of GDP and the official one for France. More precisely, the difference is computed as it follows:
+%\begin{equation}
+    %\Delta y=y^{true}-y^{NA}
+%\end{equation}
+%For each year, I compute the difference between the improved and the official GDP.
+%\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+%\DeclarePairedDelimiter\norm{\lVert}{\rVert}
+%\begin{equation}
+ %   \omega=\abs*{\frac{y^{true}-y^{NA}}{y^{NA}}}
+%\end{equation}
+%If $\omega$ is greater in absolute value than the fixed threshold of 5\%, it means that the official GDP departs from the "true" newly estimated GDP of more than $\pm 5\%$ and it is coloured of red in the plot. As it can be noticed, in plot \ref{fig:france} all the values are around zero and between the $5\%$ threshold. In particular, from 2015, the difference is positive, meaning that France is slightly understating true GDP, and this is something I could expect from a democratic and developed country with an high-quality and independent national statistical system. 
+
+In figure \ref{fig:g7countries} the rest of the G7 countries' curves are plotted and the results are analogous to what said for France. Night-time lights improved estimate is very similar to the official one estimate for the COVID-19 period.
+For G7 countries the biggest difference is in 2014 for Canada in which the improved estimate is lower than the official one suggesting that official GDP may be slightly overstated. However, further work on this is needed to understand better the reasons for such differences, which may be the result of street lights conversion to LED technology. A quick search on the web seems to confirm this theory.
+\begin{figure}
+    \centering
+    \hspace*{-2.8cm}
+    \subfloat[\centering USA]{{\includesvg[width=8cm]{images/usa.svg} }}%
+    \subfloat[\centering Italy]{{\includesvg[width=8cm]{images/ita.svg} }}%
+    \quad
+    \hspace*{-2.8cm}
+    \subfloat[\centering Canada]{{\includesvg[width=8cm]{images/can.svg} }}%
+    \subfloat[\centering Germany]{{\includesvg[width=8cm]{images/deu.svg} }}%
+    \quad
+    \hspace*{-2.8cm}
+    \subfloat[\centering United Kingdom]{{\includesvg[width=8cm]{images/gbr.svg} }}%
+    \subfloat[\centering Japan]{{\includesvg[width=8cm]{images/jpn.svg} }}%
+    \caption{G7 countries.}%
+    \label{fig:g7countries}
+\end{figure}
+
+The behaviour of less developed countries is expectably different. As it can be seen in figure \ref{fig:devcountries}, developing countries tend to have more difficulties in estimating true GDP.
+From the plot, Congo seems to have official GDP values constantly higher than the improved estimates.
+For Libya, on the other hand, the curves are more similar.
+Concerning Lebanon, what can be seen is that the official estimates are generally more optimistic than the improved ones. The same can be said for Morocco whose official GDP values are consistently above the improved ones.
+
+\begin{figure}
+    \centering
+    \hspace*{-2.8cm}
+    \subfloat[\centering Congo]{{\includesvg[width=8cm]{images/congo.svg} }}%
+    \subfloat[\centering Lybia]{{\includesvg[width=8cm]{images/lybia.svg} }}%
+    \quad
+    \hspace*{-2.8cm}
+    \subfloat[\centering Morocco]{{\includesvg[width=8cm]{images/marocco.svg} }}%
+    \subfloat[\centering Lebanon]{{\includesvg[width=8cm]{images/lebanon.svg} }}%
+    \caption{Developing countries.}%
+    \label{fig:devcountries}
+\end{figure}
+
+Generally speaking, the differences between the two curves may have different interpretations.
+First, the reason may be a very fast structural change in the economic system as suspected for Canada. As previously stated, country-specific different production functions have a strong influence on night-time lights. In fast developing countries, the changes in the economy may be the result of an evolving economic framework that may produce more or fewer night-time lights per unit of additional GDP. 
+%In the early stages, the path toward development necessarily involves the building of an industrial sector and the shrinking of the agricultural one. This eventually gives a boost to the night-time production of lights measured by outer space.
+Second, as past literature has shown, some countries may miscalculate their own national statistics for political interests.
+In figure \ref{fig:chinainda} are plotted the two curves of China and India, which allegedly, according to a part of literature \citep{martinez2018much}, may have overstated their past GDP growth estimates.
+Concerning India, it is very interesting to note that, according to the measure proposed in this thesis from 2013 until 2019, the official GDP estimates seem overstated. In 2020, on the other hand, the two measures are very similar, although the curve of the official measures always remains above the GDP improved with night-time lights.
+For China, for the entire period analysed, the official estimates are much higher compared to the proposed improved measures.
+\begin{figure}[h!]
+    \centering
+    \hspace*{-2.8cm}
+    \subfloat[\centering China]{{\includesvg[width=8cm]{images/chn.svg} }}%
+    \subfloat[\centering India]{{\includesvg[width=8cm]{images/ind.svg} }}%
+    \caption{China and India - differences.}%
+    \label{fig:chinainda}
+\end{figure}
+Differently from India, over the COVID period, the Chinese official measures seem to underestimate the fall in GDP by about three percentage points compared to what the improved estimate with satellite information reveals.
+However, in future work, confidence intervals should be constructed to verify that the observed differences are statistically significant.
+
+\section{Results of extreme values removal}
+As previously stated, some observations have extremely high values in several countries.
+In this section, I want to see what happens if these values are removed and what the consequences are in the countries that are most affected.
+I remove the values greater than $800nW/cm^2/sr$ through \textit{data clamping} of the raster files.
+The table \ref{table:differences} in the appendix shows the observations with a difference of more than 5\% of the data clamped with respect of the original files.
+As can be seen, these are mostly countries with a strong extracting vocation.
+In particular, it can be seen that in 2013, 41\% of Iraq's night lighting was composed of gas flares, a share that tends to decrease to 27\% in more recent years.
+\begin{figure}[h!]
+    \centering
+    \hspace*{-2.8cm}
+    \subfloat[\centering Russia]{{\includesvg[width=8cm]{images/RUS.svg} }}%
+    \subfloat[\centering Netherlands]{{\includesvg[width=8cm]{images/NLD.svg} }}%
+    \quad
+    \hspace*{-2.8cm}
+    \subfloat[\centering Kazakhstan ]{{\includesvg[width=8cm]{images/KAZ.svg} }}%
+    \subfloat[\centering Iraq]{{\includesvg[width=8cm]{images/IRQ.svg} }}%
+    \caption{Comparison of improved estimates with and without extreme values correction.}%
+    \label{fig:outliersgraph}
+\end{figure}
+The Netherlands also has a strong component of lights from extreme observations. Unlike most of the other countries in the table, these extreme values derive from the strong component of modern greenhouses, which, as previously seen, emit a large amount of light.
+Since I use growth rates in this thesis, I am not very interested in the shares of extreme lights in relation to the total but rather in how they vary over time and whether they alter the improved measure of GDP proposed above.
+Figure \ref{fig:outliersgraph} shows four countries with a high proportion of extreme lights with respect to the total. The red and blue lines, as seen before, are the official GDP and the GDP increased by night-time lights, respectively. The black line, on the other hand, is the GDP increased by night lights by removing the extreme observations.
+As can be seen from the graphs, the black line tends to assume values very similar to the red one. This means that the extreme values remain constant over time and do not change abruptly.
+Therefore, while in levels these extreme values are of great importance since in some cases they make up to 40\% of the total of the lights observed by satellite, using growth rates their importance is less relevant.
+
+
+
