@@ -36,9 +36,9 @@ eog_downloadr <- function(credentials, start, end, data_type, out_folder){
   ## You can either define the output file name directly
   # output_file <- 'EOG_sensitive_contents.txt'
   ## Or get the filename from the data_url variable
-  output_file <- basename(data_url)
-  download.file(data_url,output_file,mode = "wb", headers = list(Authorization = auth))
-  credentials
+  #output_file <- basename(data_url)
+  #download.file(data_url,output_file,mode = "wb", headers = list(Authorization = auth))
+  #credentials
   
   #month
   link <- "https://eogdata.mines.edu/nighttime_light/annual/v21/"
@@ -63,12 +63,3 @@ eog_downloadr <- function(credentials, start, end, data_type, out_folder){
   }
 }
 eog_downloadr(credentials = credentials, 2012, 2021, "median_masked", out_folder = "F:/tmp/eog_downloader")
-download.file(url="https://eogdata.mines.edu/nighttime_light/annual/v21/2021/VNL_v21_npp_2021_global_vcmslcfg_c202205302300.median_masked.dat.tif.gz", destfile = "VNL_v21_npp_2021_global_vcmslcfg_c202205302300.median_masked.dat.tif.gz", mode="wb", headers=list(Authorization = auth))
-download.file()  
-
-url <- 'https://api.github.com/repos/isciences/exactextractr/tarball/HEAD'
-utils::download.file(url, "path.zip") 
-library(devtools)
-install_github("isciences/exactextractr")
-gunzip("F:/tmp/eog_downloader/2012.gz", destname = "F:/tmp/eog_downloader/2012.tif", overwrite = FALSE, remove = FALSE, BFR.SIZE = 1e+07)                       
-                     
