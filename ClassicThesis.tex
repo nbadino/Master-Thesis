@@ -27,7 +27,7 @@
 %
 % **************************************************************************************************************
 \RequirePackage{fix-cm} % fix some latex issues see: http://texdoc.net/texmf-dist/doc/latex/base/fixltx2e.pdf
-\documentclass[ twoside,openright,titlepage,numbers=noenddot,headinclude,%1headlines,% letterpaper a4paper
+\documentclass[oneside,openright,titlepage,numbers=noenddot,headinclude,%1headlines,% letterpaper a4paper
                 footinclude=true,cleardoublepage=empty,abstractoff, % <--- obsolete, remove (todo)
                 BCOR=5mm,paper=a4,fontsize=14pt,%11pt,a4paper,%
                 ngerman,american,%
@@ -36,6 +36,30 @@
 \usepackage[strict]{changepage}% <-- new
 \usepackage{booktabs,tabularx}% <-- added that your MWE can be compiled
 \usepackage{blindtext}
+\usepackage{mathtools} 
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{rotating}
+\usepackage{vcell}
+\usepackage{colortbl}
+\usepackage{svg}
+\usepackage{xurl}
+\usepackage{tikz}
+\usepackage[multiple]{footmisc}
+\usepackage{pdflscape}
+\usepackage{longtable}
+\usepackage[a-1b]{pdfx}
+\usepackage[pdfa]{hyperref}
+\usetikzlibrary{shapes,decorations,arrows,calc,arrows.meta,fit,positioning}
+\tikzset{
+    -Latex,auto,node distance =1 cm and 1 cm,semithick,
+    state/.style ={ellipse, draw, minimum width = 0.7 cm},
+    point/.style = {circle, draw, inner sep=0.04cm,fill,node contents={}},
+    bidirected/.style={Latex-Latex,dashed},
+    el/.style = {inner sep=2pt, align=left, sloped}
+}
+
 %********************************************************************
 % Note: Make all your adjustments in here
 %*******************************************************
@@ -92,13 +116,15 @@ da. Le usate medical addresses pro, europa origine sanctificate nos se.}
 \include{Chapters/Chapter03}
 %\include{multiToC} % <--- just debug stuff, ignore for your documents
 % ********************************************************************
+\include{Chapters/Chapter04}
+\include{Chapters/Chapter05}
 % Backmatter
 %*******************************************************
 \appendix
 %\renewcommand{\thechapter}{\alph{chapter}}
 \cleardoublepage
 %\part{Appendix}
-%\include{Chapters/Chapter0A}
+\include{Chapters/Chapter0A}
 %********************************************************************
 % Other Stuff in the Back
 %*******************************************************
